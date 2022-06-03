@@ -1,0 +1,21 @@
+<script>
+  let parentNode = document.documentElement;
+
+  import Node from './components/Node.xht'
+</script>
+
+<div>
+  <Node node={parentNode} open={true}  />
+</div>
+
+<style>
+  div {
+    padding: 10px;
+    word-break: keep-all;
+    white-space: nowrap;
+
+    font-family: monospace;
+    font-size: 16px;
+    font-size: clamp(14px, 15px, 16px);
+  }
+</style>

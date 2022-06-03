@@ -1,0 +1,74 @@
+<script>
+  import IconButton from './components/IconButton.xht';
+  import NoTable from './components/NoTable.xht';
+
+  let root;
+
+  const getters = {
+    'Script': () => {
+      const result = [];
+
+      const scripts = Array.from(document.scripts);
+
+      for (const script of scripts) {
+        if (script.src !== '') {
+          result.push(script.src);
+        }
+      }
+
+      return result;
+    },
+    'Stylesheet': () => {
+      const result = [];
+
+      for (const styleSheet of document.styleSheets) {
+        if (styleSheet.href && !styleSheet.href.startsWith(location.origin)) {
+          result.push(styleSheet.href)
+        }
+      }
+
+      return result;
+    },
+    'Image': () => {
+      const result = [];
+
+      const images = Array.from(document.querySelectorAll('img'));
+
+      const src = [];
+      const alt = [];
+
+      for (const img of images) {
+        if (src.includes(img.src)) continue;
+
+        const isInternal = root ? root.contains(img) : false;
+
+        if (img.src !== '' && !isInternal) {
+          src.push(img.src);
+          alt.push(img.getAttribute('alt'));
+        }
+      }
+
+      for (let i = 0; i < src.length; i++) {
+        result.push([src[i], alt[i]])
+      }
+
+      return result;
+    }
+  }
+
+  const data = {
+    'Script': getters['Script'](),
+    'Stylesheet': getters['Stylesheet'](),
+    'Image': getters['Image']()
+  }
+
+  const update = (key) => {
+    data[key] = getters[key]();
+  }
+</script>
+
+<div #root>
+  <NoTable data={data} key="Script" update={() => update("Script")} />
+  <NoTable data={data} key="Stylesheet" update={() => update("Stylesheet")} />
+  <NoTable data={data} key="Image" update={() => update("Image")} />
+</div>

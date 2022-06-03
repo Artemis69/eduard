@@ -1,0 +1,122 @@
+<script>
+  import { parseUserAgent } from 'detect-browser';
+
+  const browser = parseUserAgent(navigator.userAgent)
+</script>
+
+<ul class="list">
+  <li>
+    <h2 class="title">Location</h2>
+    <div class="content">{location.href}</div>
+  </li>
+  <li>
+    <h2 class="title">User Agent</h2>
+    <div class="content">{navigator.userAgent}</div>
+  </li>
+  <li>
+    <h2 class="title">Device</h2>
+    <div class="content">
+      <table>
+        <tbody>
+          <tr>
+            <td>screen</td>
+            <td>
+              {screen.width} * {screen.height}
+            </td>
+          </tr>
+          <tr>
+            <td>viewport</td>
+            <td>
+              {window.innerWidth} * {window.innerHeight}
+            </td>
+          </tr>
+          <tr>
+            <td>pixel ratio</td>
+            <td>{window.devicePixelRatio}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </li>
+  <li>
+    <h2 class="title">System</h2>
+    <div class="content">
+      <table>
+        <tbody>
+          <tr>
+            <td>os</td>
+            <td>{browser.os}</td>
+          </tr>
+          <tr>
+            <td>browser</td>
+            <td>
+              {browser.name} {browser.version}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </li>
+</ul>
+
+<style>
+  .list {
+    overflow-y: auto;
+    list-style: none;
+    margin-block-start: 0;
+    padding-inline-start: 0;
+  }
+
+  li {
+    margin: 10px;
+    border: 1px solid rgb(202, 205, 209);
+  }
+
+  .title,
+  .content {
+    padding: 10px;
+  }
+
+  .title {
+    padding-bottom: 0;
+    font-size: 16px;
+    font-weight: 500;
+    color: #000;
+  }
+
+  .content {
+    margin: 0;
+    user-select: text;
+    color: rgb(27, 27, 27);
+    word-break: break-all;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th,
+  td {
+    border: 1px solid rgb(202, 205, 209);
+    padding: 10px;
+  }
+
+  * {
+    user-select: text;
+  }
+
+  a {
+    color: #ababab;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    li, th, td {
+      border-color: rgb(73, 76, 80);
+    }
+
+    .title, .content {
+      color: rgb(255, 255, 255);
+    }
+  }
+</style>

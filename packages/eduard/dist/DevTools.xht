@@ -1,0 +1,273 @@
+<script>
+  import IconButton from './components/IconButton.xht';
+
+  export let opened = true;
+  export let tools = [];
+
+  const tabs = {};
+
+  let current = "";
+
+  const slider = { width: 0, x: 3 };
+
+  const moveSlider = () => {
+    if (!current) return;
+
+    const tab = tabs[current];
+
+    if (!tab) return;
+
+    const rect = tab.getBoundingClientRect();
+
+    slider.x = rect.left;
+    slider.width = tab.offsetWidth;
+  }
+
+  const onSelect = (name) => {
+    current = name;
+    moveSlider();
+  };
+
+  const selectDefault = () => (!current && tools.length > 0) && (onSelect(tools[0].name));
+  
+  const component = $runtime.current_component;
+
+  function add(tool) {
+    tools.push(tool);
+
+    $tick(selectDefault);
+  }
+
+  function remove(name) {
+    for (let i = 0; i < tools.length; i++) {
+      if (tools[i].name === name) {
+        tools.splice(i, 1);
+      }
+    }
+
+    delete tabs[name];
+  }
+
+  function open() {
+    opened = true;
+  }
+  
+  function close() {
+    opened = false;
+  }
+
+  function setCurrent(name) {
+    current = name;
+  }
+
+  component.add = add;
+  component.remove = remove;
+  component.open = open;
+  component.close = close;
+  component.setCurrent = setCurrent;
+</script>
+
+<malina:window @resize={moveSlider} />
+
+{#if opened}
+<div class="root">
+  <div class="navigation" role="navigation" aria-label="DevTools toolbar">
+    <div class="tabs" role="tablist" @scroll={moveSlider}>
+      {#each tools as tab (tab.name)}
+      <div
+        class="tab"
+        class:selected={current === tab.name}
+        role="tab"
+        aria-selected={current === tab.name}
+        aria-label={tab.name}
+        @click={onSelect(tab.name)}
+        {* tabs[tab.name] = $element;}
+      >
+        <span>{tab.name}</span>
+      </div>
+      {/each}
+      <IconButton aria-label="Close DevTools" title="Close DevTools" @click={close}>
+        <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M17.25 6.75L6.75 17.25" />
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M6.75 6.75L17.25 17.25" />
+        </svg>
+      </IconButton>
+    </div>
+    <div
+      class="slider"
+      style:width="{slider.width}px"
+      style:transform="translateX({slider.x}px)"
+    />
+  </div>
+  <div class="tabpanel" role="tabpanel" aria-label="{current} Panel">
+    {#if tools.length > 0}
+      <component:{(tools.find(tool => tool.name === current) || tools[0]).component} />
+    {/if}
+  </div>
+</div>
+{/if}
+
+<style>
+  .root {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 16777271;
+    
+    height: 38vh;
+
+    margin-bottom: env(keyboard-inset-bottom, 0);
+    
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: column;
+
+    contain: style;
+
+    background: #ffffff;
+    font-family: ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+  }
+
+  .navigation {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    flex-basis: 32px;
+
+    width: 100%;
+
+    cursor: default;
+    pointer-events: none;
+
+    padding: 0 3px;
+
+    background: #f7f7f7;
+    color: #fff;
+
+    box-shadow: rgba(136, 136, 136, 0.22) 0px 1.6px 3.6px 0px, rgba(136, 136, 136, 0.145) 0px 0.3px 0.9px 0px;
+  }
+
+  .tabs {
+    pointer-events: initial;
+
+    display: flex;
+
+    -webkit-overflow-scrolling: touch;
+
+    overflow-x: auto;
+    scrollbar-width: 0;
+  }
+
+  .tab {
+    display: flex;
+    align-items: center;
+
+    padding: 2px 0.8em;
+    margin: 2px 0;
+
+    border-radius: 2px;
+
+    cursor: pointer;
+
+    height: 34px;
+
+    line-height: 20px;
+    white-space: nowrap;
+    font-size: 16px;
+
+    color: rgb(102, 102, 102);
+  }
+
+  .tab:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: rgb(27, 27, 27);
+  }
+
+  .tab:active {
+    background: #ffffff;
+  }
+
+  .tab.selected {
+    background: #ffffff;
+    color: rgb(27, 27, 27);
+  }
+
+  .tab > span {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  .slider {
+    position: absolute;
+    left: 0;
+    bottom: 1px;
+    z-index: 50;
+
+    transform-origin: 0 100%;
+    transition: transform 150ms cubic-bezier(0, 0, 0.2, 1);
+
+    height: 2px;
+    border-radius: 2px;
+
+    background-color: rgb(0, 120, 215);
+  }
+
+  .tabpanel {
+    position: relative;
+    overflow-y: auto;
+    
+    background: #fff;
+    color: #000;
+    
+    height: 100%;
+    width: 100%;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .root {
+      background: #202124;
+    }
+
+    .navigation {
+      background: rgb(51, 51, 51);
+      box-shadow: rgba(26, 26, 26, 0.22) 0px 1.6px 3.6px 0px, rgba(26, 26, 26, 0.145) 0px 0.3px 0.9px 0px;
+    }
+
+    .tab {
+      color: rgb(167, 167, 167);
+    }
+
+    .tab:hover {
+      background: rgb(72, 72, 72);
+      color:  #fff;
+    }
+
+    .tab:active {
+      background: rgb(36, 36, 36);
+    }
+
+    .tab.selected {
+      background: rgb(36, 36, 36);
+      color:  #fff;
+    }
+
+    .tabpanel {
+      background: #202124;
+      color: #fff;
+    }
+  }
+
+  @media (min-width: 960px) {
+    .tab {
+      height: 28px;
+      line-height: 18px;
+      font-size: 14px;
+    }
+  }
+</style>

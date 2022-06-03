@@ -1,0 +1,79 @@
+<script>
+  $attributes;
+</script>
+
+<button type="button" class="button" {...$attributes} @@>
+  <slot />
+</button>
+
+<style>
+  .button {
+    white-space: nowrap;
+    overflow: hidden;
+    
+    margin: 2px 2px 2px auto;
+    padding: 0;
+
+    min-width: 34px;
+    height: 34px;
+
+    cursor: pointer;
+
+    position: relative;
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    border-radius: 2px;
+
+    background: transparent;
+    color: rgb(27, 27, 27);
+  }
+
+  .button:hover {
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  .button:active {
+    background: rgb(224, 224, 224);
+  }
+
+  .button > :global(svg) {
+    color: rgb(27, 27, 27);
+  }
+
+  .button:hover > :global(svg) {
+    color: #000;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .button {
+      color: #fff;
+    }
+
+    .button:hover {
+      background: rgb(72, 72, 72);
+    }
+
+    .button:active {
+      background: rgb(66, 66, 66);
+    }
+
+    .button > :global(svg) {
+      color: rgb(167, 167, 167);
+    }
+
+    .button:hover > :global(svg) {
+      color: #fff;
+    }
+  }
+
+  @media (min-width: 960px) {
+    .button {
+      min-width: 28px;
+      height: 28px;
+    }
+  }
+</style>

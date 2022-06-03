@@ -1,0 +1,223 @@
+<script>
+  import 'luna-object-viewer/luna-object-viewer.css'
+  import 'luna-console/luna-console.css'
+
+  const loadLunaConsole = import('luna-console');
+
+  let container;
+  let value = 'console.clear()';
+
+  loadLunaConsole
+  .then(({ default: LunaConsole }) => {
+    const logger = new LunaConsole(container, {
+        theme: "light",
+      });
+
+      const native = window.console;
+      window.console = logger;
+
+      $onDestroy(() => {
+        window.console = native;
+        logger.destroy();
+      });
+  })
+  .catch((err) => {});
+
+  const evaluate = () => {
+    if (value === '') return;
+
+    console.evaluate(value);
+    value = '';
+  }
+</script>
+
+<div #container />
+<div class="eduard-input">
+  <svg width="32" height="32" fill="none" viewBox="0 0 24 24">
+    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M10.75 8.75L14.25 12L10.75 15.25" />
+  </svg>
+  <input type="text" :value:value @keypress|enter={evaluate} />
+  <div class="eduard-control">
+    <button @click={value = ''}>Cancel</button>
+    <button @click={evaluate}>Execute</button>
+  </div>
+</div>
+
+<style global>
+  .eduard-input {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    display: flex;
+    align-items: center;
+
+    border-top: 1px solid rgb(202,205,209);
+
+    user-select: none;
+
+    height: 32px;
+  }
+
+  .eduard-input .eduard-control {
+    display: flex;
+  }
+
+  .eduard-input input {
+    height: 32px;
+    line-height: 32px;
+
+    resize: none;
+    overflow: hidden;
+
+    flex-grow: 1;
+    
+    background: transparent;
+
+    border: none;
+  }
+
+  .eduard-input .eduard-control button {
+    white-space: nowrap;
+    overflow: hidden;
+    
+    margin: 4px;
+    padding: 4px 10px;
+
+    min-width: 34px;
+    height: 28px;
+
+    cursor: pointer;
+
+    position: relative;
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    border-radius: 2px;
+
+    background: transparent;
+    color: rgb(27, 27, 27);
+  }
+
+  .eduard-input .eduard-control button:hover {
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  .eduard-input .eduard-control button:active {
+    background: rgb(224, 224, 224);
+  }
+
+  .luna-console {
+    height: calc(100% - 32px);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .luna-console {
+      background-color: #202124;
+    }
+
+    .luna-console-log-item {
+      border-bottom-color: #3A3A3A;
+      color: #fff;
+    }
+
+    .luna-console-abstract .luna-console-key, .luna-object-viewer-key, .luna-object-viewer-array, .luna-object-viewer-object, .luna-console-log-item .luna-console-keyword  {
+      color: rgb(220, 220, 170) !important;
+    }
+
+    .luna-console-abstract .luna-console-number, .luna-object-viewer-number, .luna-console-log-item .luna-console-number {
+      color: rgb(153, 128, 255) !important;
+    }
+
+    .luna-console-abstract .luna-console-null, .luna-object-viewer-null {
+      color: rgb(154, 127, 213) !important;
+    }
+
+    .luna-console-abstract .luna-console-string, .luna-object-viewer-string, .luna-object-viewer-regexp, .luna-console-log-item .luna-console-string {
+      color: rgb(209, 151, 127) !important;
+    }
+
+    .luna-console-abstract .luna-console-boolean, .luna-object-viewer-boolean, .luna-console-log-item .luna-console-comment {
+      color: rgb(161, 247, 181) !important;
+    }
+
+    .luna-console-abstract .luna-console-special, .luna-object-viewer-special, .luna-console-log-item .luna-console-operator {
+      color: rgb(154, 127, 213) !important;
+    }
+
+    .luna-object-viewer-key-lighter {
+      color: rgb(220, 220, 170) !important;
+      opacity: 1;
+    }
+
+    .luna-object-viewer-open {
+      color: rgb(232, 234, 237) !important;
+    }
+
+    .luna-console-log-item.luna-console-html table td, .luna-console-log-item.luna-console-html table th, .luna-console-log-item.luna-console-table table td, .luna-console-log-item.luna-console-table table th {
+      border-color: #3A3A3A;
+    }
+
+    .luna-console-log-item.luna-console-html table th, .luna-console-log-item.luna-console-table table th {
+      background: #202124;
+    }
+
+    .luna-console-log-item.luna-console-html table, .luna-console-log-item.luna-console-table table {
+      color: #eee;
+    }
+
+    .luna-console-log-item .luna-console-icon-container .luna-console-icon {
+      color: #ccc;
+    }
+
+    .luna-console-nesting-level {
+      border-right-color: #666;
+    }
+
+    .eduard-input {
+      border-top-color: #3d3d3d;
+    }
+
+    .eduard-input input {
+      color: #ccc;
+    }
+
+    .eduard-input .eduard-control button {
+      color: #fff;
+    }
+
+    .eduard-input .eduard-control button:hover {
+      background: rgb(72, 72, 72);
+    }
+
+    .eduard-input .eduard-control button:active {
+      background: rgb(66, 66, 66);
+    }
+
+    .luna-console-log-item.luna-console-warn {
+      color: hsl(39deg 89% 55%);
+      background-color: hsl(50deg 100% 10%);
+      border-top-color: rgb(102 85 0);
+      border-bottom-color: rgb(102 85 0);
+    }
+
+    .luna-console-log-item .luna-console-icon-container .luna-console-icon-warn {
+      color: #FFB64C;
+    }
+
+    .luna-console-log-item.luna-console-error {
+      color: rgb(255, 128, 128);
+      background: rgb(41, 0, 0);
+      border-top-color: rgb(92, 0, 0);
+      border-bottom-color: rgb(92, 0, 0);
+    }
+
+    .luna-console-log-item .luna-console-icon-container .luna-console-icon-error {
+      color: #CC1F23;
+    }
+  }
+</style>

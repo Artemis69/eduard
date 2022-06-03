@@ -1,0 +1,106 @@
+<script>
+  import { voidElements } from '../library/void-elements.js'
+  import { Node } from './index.js';
+
+  export let node = null;
+  export let open = false;
+
+  const nodeName = node.nodeName.toLowerCase();
+  const attributes = Array.from(node.attributes);
+  const children = Array.from(node.children);
+
+  if (nodeName === 'body') {
+    open = true;
+  }
+
+  const change = (event) => {
+    event.stopPropagation();
+    open = !open;
+  };
+
+  const clear = (content) => {
+    return content.replace(/\n/g, ' ');
+  }
+
+  const value = (content) => {
+    if (content.length > 160) {
+      content = content.slice(0, 160) + ' … '
+    }
+
+    return content;
+  }
+
+  const isVoid = voidElements.has(nodeName);
+
+  const textContent = children.length === 0 ? node.textContent.trim() : '';
+</script>
+
+<span class="tag" @click={change}><span class="node">{@html '&lt;'}</span><span class="tag">{nodeName}</span>{#each attributes as attr (attr.name)}{@html '&nbsp;'}<span class="attr">{clear(attr.name)}</span>{#if attr.value !== '' || attr.value !== null}<span class="punc">="</span><span class="name">{value(clear(attr.value))}</span><span class="punc">"</span>{/if}{/each}<span class="node">{@html '&gt;'}</span>{#if children.length === 0}{#if textContent !== ''}<span class="punc">{value(textContent)}</span>{/if}{:else}{''}{#if open}<ol role="group">{#each children as child}<li role="treeitem"><Node node={child} /></li>{/each}</ol>{:else}{''}<span class="punc">…</span>{/if}{/if}{#if !isVoid}<span class="node">{@html '&lt;'}/</span><span class="tag">{nodeName}</span><span class="node">{@html '&gt;'}</span>{/if}</span>
+
+<style>
+  * {
+    cursor: default;
+  }
+
+  ol {
+    list-style: none;
+    padding-inline-start: 12px;
+    margin-block-start: 0;
+    margin-block-end: 0;
+    color: rgb(34, 34, 34);
+  }
+
+  .tag {
+    color: rgb(74, 105, 201);
+  }
+
+  .punc {
+    color: rgb(34, 34, 34);
+  }
+
+  .name {
+    color: rgb(136, 18, 128);
+  }
+
+  .attr {
+    color: rgb(153, 69, 0);
+  }
+
+  .comment {
+    color: rgb(0, 128, 0);
+  }
+
+  .node {
+    color: rgb(34, 34, 34);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    ol {
+      color: rgb(213, 213, 213);
+    }
+
+    .tag {
+      color: rgb(110, 170, 220);
+    }
+
+    .punc {
+      color: rgb(213, 213, 213);
+    }
+
+    .name {
+      color: rgb(209, 151, 127);
+    }
+
+    .attr {
+      color: rgb(155, 187, 220);
+    }
+
+    .comment {
+      color: rgb(139, 176, 123);
+    }
+
+    .node {
+      color: rgb(110, 170, 220);
+    }
+  }
+</style>

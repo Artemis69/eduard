@@ -1,0 +1,125 @@
+<script>
+  import IconButton from './IconButton.xht';
+  
+  export let data = {};
+  export let key = '';
+  export let update = () => {};
+
+  const prettifyURL = (url) => {
+    try {
+      let _url = new URL(url);
+      _url.search = '';
+
+      return _url.toString()
+    } catch {
+      return url;
+    }
+  }
+</script>
+
+<div class="item">
+  <div class="header">
+    <h3>{key}</h3>
+    <IconButton @click={update}>
+      <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M11.25 4.75L8.75 7L11.25 9.25" />
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12.75 19.25L15.25 17L12.75 14.75" />
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9.75 7H13.25C16.5637 7 19.25 9.68629 19.25 13V13.25" />
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M14.25 17H10.75C7.43629 17 4.75 14.3137 4.75 11V10.75" />
+      </svg>
+    </IconButton>
+  </div>
+  {#if data[key].length === 0}
+    <div class="content">
+      Empty
+    </div>
+  {:else}
+    <ul class="content" class:img={key === 'Image'}>
+      {#each data[key] as value}
+        <li>
+          {#if key === 'Image'}
+            <img src={value[0]} alt={value[1]} draggable="false" />
+          {:else}
+            <a target="_blank" href={value}>{prettifyURL(value)}</a>
+          {/if}
+        </li>
+      {/each}
+    </ul>
+  {/if}
+</div>
+
+<style>
+  .item {
+    margin: 10px;
+    border: 1px solid rgb(202, 205, 209);
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    background: #EFEFEF;
+    padding: 5px 10px;
+  }
+
+  h3 {
+    font-size: 16px;
+    font-weight: 400;
+    color: #000;
+  }
+
+  .content {
+    padding: 5px 10px;
+    list-style: none;
+
+    margin-block-start: 0;
+    margin-block-end: 0;
+
+    overflow-wrap: break-word;
+  }
+
+  .content.img {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 10px;
+  }
+
+  .content a {
+    color: rgb(27, 27, 27) !important;
+  }
+
+  li > img {
+    display: block;
+    max-width: 100%;
+    margin: 0 auto;
+    cursor: pointer;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .item {
+      border-color: rgb(73, 76, 80);
+    }
+
+    .header {
+      color: #fff;
+      background: #333333;
+    }
+
+    h3 {
+      color: #fff;
+    }
+
+    .content a {
+      color: #eee !important;
+    }
+  }
+
+  @media (min-width: 960px) {
+    .content.img {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+  }
+</style>
